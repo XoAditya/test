@@ -65,8 +65,8 @@ function plantFlower() {
   const flowerData = {
     message,
     row: Math.floor(Math.random() * 5),
-    left: Math.random() * 60 + 20, // Ensure visible placement
-    top: Math.random() * 60 + 20,
+   left: Math.random() * 70,            // 0% to 70% from left
+top: Math.random() * 40 + 60         // 60% to 100% from top (bottom 40%)
     timestamp: Date.now()
   };
 
