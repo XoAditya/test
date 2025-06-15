@@ -1,14 +1,19 @@
-// Firebase config
+// Your web app's Firebase configuration (Compat Version)
 const firebaseConfig = {
   apiKey: "AIzaSyBgtQdwGMzD-8GK4EEnl4Cd_gGuKGWJ9G0",
   authDomain: "virtuallovegarden.firebaseapp.com",
+  databaseURL: "https://virtuallovegarden-default-rtdb.firebaseio.com",
   projectId: "virtuallovegarden",
   storageBucket: "virtuallovegarden.firebasestorage.app",
   messagingSenderId: "73424640990",
   appId: "1:73424640990:web:b65870e0892831f0bd1b4f",
+  measurementId: "G-3GMCVYZXS8"
 };
+
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+
 
 function plantFlower() {
   const message = document.getElementById('message').value.trim();
