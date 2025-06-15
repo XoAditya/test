@@ -56,7 +56,6 @@ function renderFlower(data, id) {
 
   garden.appendChild(flower);
 }
-
 function plantFlower() {
   const message = document.getElementById('message').value.trim();
   if (!message) return;
@@ -64,8 +63,8 @@ function plantFlower() {
   const flowerData = {
     message: message,
     row: Math.floor(Math.random() * 5),
-    left: Math.random() * 70,           // 0–70% from left
-    top: Math.random() * 40 + 60,       // 60–100% from top (bottom 40%)
+    left: Math.random() * 70,            // 0–70% from left (right 70%)
+    top: Math.random() * 40 + 60,        // 60–100% from top (bottom 40%)
     timestamp: Date.now()
   };
 
@@ -80,6 +79,7 @@ function plantFlower() {
 
   document.getElementById('message').value = '';
 }
+
 
 // === Realtime Sync ===
 const flowerRef = db.ref('flowers');
