@@ -4,7 +4,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyBgtQdwGMzD-8GK4EEnl4Cd_gGuKGWJ9G0",
   authDomain: "virtuallovegarden.firebaseapp.com",
-  databaseURL: "https://virtuallovegarden-default-rtdb.firebaseio.com",
+  databaseURL: "https://virtuallovegarden-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "virtuallovegarden",
   storageBucket: "virtuallovegarden.firebasestorage.app",
   messagingSenderId: "73424640990",
