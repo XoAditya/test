@@ -15,26 +15,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// Add a flower to the screen and database
-function plantFlower() {
-  const message = document.getElementById('message').value.trim();
-  if (!message) return;
-
-  const flowerData = {
-    message,
-    row: Math.floor(Math.random() * 5),
-    left: Math.random() * 60 + 40,
-    top: Math.random() * 60 + 40,
-    timestamp: Date.now()
-  };
-
-  const flowerRef = db.ref('flowers').push();
-  flowerRef.set(flowerData);
-  renderFlower(flowerData, flowerRef.key);
-  document.getElementById('message').value = '';
-}
-
-// Render flower from data
+// Function to add a flower to the screen
 function renderFlower(data, id) {
   const garden = document.getElementById('garden');
   const flower = document.createElement('div');
@@ -71,11 +52,35 @@ function renderFlower(data, id) {
   garden.appendChild(flower);
 }
 
-// Load existing flowers on page load
-db.ref('flowers').once('value', snapshot => {
-  snapshot.forEach(child => {
-    renderFlower(child.val(), child.key);
-  });
+// Add flower to Firebase and render it
+function plantFlower() {
+  const message = document.getElementById('message').value.trim();
+  if (!message) return;
+
+  const flowerData = {
+    message,
+    row: Math.floor(Math.random() * 5),
+    left: Math.random() * 60 + 20, // Ensure visible placement
+    top: Math.random() * 60 + 20,
+    timestamp: Date.now()
+  };
+
+  const flowerRef = db.ref('flowers').push();
+  flowerRef.set(flowerData);
+  renderFlower(flowerData, flowerRef.key);
+  document.getElementById('message').value = '';
+}
+
+// Listen for real-time additions
+const flowerRef = db.ref('flowers');
+flowerRef.on('child_added', snapshot => {
+  renderFlower(snapshot.val(), snapshot.key);
+});
+
+// Listen for real-time deletions
+flowerRef.on('child_removed', snapshot => {
+  const flowerEl = document.querySelector(`.flower[data-id='${snapshot.key}']`);
+  if (flowerEl) flowerEl.remove();
 });
 
 function closePopup() {
