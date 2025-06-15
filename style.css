@@ -1,0 +1,120 @@
+/* === Background Video === */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+}
+#garden {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.flower {
+  position: absolute;
+  width: 41px;
+  height: 41px;
+  background-image: url('sprite.png');
+  background-repeat: no-repeat;
+  background-size: auto;
+  image-rendering: pixelated;
+  cursor: pointer;
+  z-index: 1;
+  animation: grow-to-2 0.4s steps(1) forwards;
+}
+@keyframes grow-to-2 {
+  from { background-position-x: 0px; }
+  to   { background-position-x: -41px; }
+}
+@keyframes grow-to-4 {
+  from { background-position-x: -82px; }
+  to   { background-position-x: -123px; }
+}
+#input-box {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px 15px;
+  border-radius: 12px;
+  display: flex;
+  gap: 10px;
+  z-index: 2;
+}
+#input-box input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+#popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  z-index: 5;
+}
+.hidden {
+  display: none;
+}
+#audio-control {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#audio-control img {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+#volume-slider {
+  width: 100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+#volume-slider.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+#shovel-control {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 4;
+}
+#shovel-icon {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.shovel-tooltip {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #fff;
+  background: rgba(0,0,0,0.6);
+  padding: 3px 6px;
+  border-radius: 6px;
+  white-space: nowrap;
+}

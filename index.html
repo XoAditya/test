@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Love Garden</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Background Music -->
+  <audio id="bg-music" loop autoplay>
+    <source src="your-music.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Speaker Control -->
+  <div id="audio-control">
+    <img id="speaker-icon" src="https://cdn-icons-png.flaticon.com/512/727/727269.png" alt="Speaker">
+    <input id="volume-slider" type="range" min="0" max="1" step="0.01" value="0.5">
+  </div>
+
+  <!-- Background Video -->
+  <video autoplay muted loop id="bg-video">
+    <source src="animation.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Garden Container -->
+  <div id="garden"></div>
+
+  <!-- Message Input -->
+  <div id="input-box">
+    <input type="text" id="message" placeholder="Write your love note...">
+    <button onclick="plantFlower()">Plant Flower 🌸</button>
+  </div>
+
+  <!-- Popup -->
+  <div id="popup" class="hidden">
+    <p id="popup-text"></p>
+    <button onclick="closePopup()">Close</button>
+  </div>
+
+  <!-- Puff Sound -->
+  <audio id="puff-sound" src="puff.mp3" preload="auto"></audio>
+
+  <!-- Shovel Control -->
+  <div id="shovel-control">
+    <div class="shovel-wrapper">
+      <img id="shovel-icon" src="shovel.png" alt="Shovel">
+      <span class="shovel-tooltip"></span>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
