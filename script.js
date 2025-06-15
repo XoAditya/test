@@ -63,8 +63,8 @@ function plantFlower() {
   const flowerData = {
     message: message,
     row: Math.floor(Math.random() * 5),
-    left: Math.random() * 70,            // 0–70% from left (right 70%)
-    top: Math.random() * 40 + 60,        // 60–100% from top (bottom 40%)
+    left: Math.random() * 60 + 40,  // 40% to 100% = right 60% of page
+    top: Math.random() * 60 + 40,   // 40% to 100% = bottom 60% of page
     timestamp: Date.now()
   };
 
@@ -79,6 +79,7 @@ function plantFlower() {
 
   document.getElementById('message').value = '';
 }
+
 
 
 // === Realtime Sync ===
