@@ -18,6 +18,8 @@ const db = firebase.database();
 // Function to add a flower to the screen
 function renderFlower(data, id) {
   const garden = document.getElementById('garden');
+  if (!garden) return;
+
   const flower = document.createElement('div');
   flower.className = 'flower';
   flower.dataset.id = id;
@@ -60,28 +62,16 @@ function plantFlower() {
   const flowerData = {
     message,
     row: Math.floor(Math.random() * 5),
-    left: Math.random() * 60 + 20, // Ensure visible placement
+    left: Math.random() * 60 + 20,
     top: Math.random() * 60 + 20,
     timestamp: Date.now()
   };
 
   const flowerRef = db.ref('flowers').push();
   flowerRef.set(flowerData);
-  renderFlower(flowerData, flowerRef.key);
+  // No need to call renderFlower manually; it will be handled by child_added
   document.getElementById('message').value = '';
 }
-
-// Listen for real-time additions
-const flowerRef = db.ref('flowers');
-flowerRef.on('child_added', snapshot => {
-  renderFlower(snapshot.val(), snapshot.key);
-});
-
-// Listen for real-time deletions
-flowerRef.on('child_removed', snapshot => {
-  const flowerEl = document.querySelector(`.flower[data-id='${snapshot.key}']`);
-  if (flowerEl) flowerEl.remove();
-});
 
 function closePopup() {
   document.getElementById('popup').classList.add('hidden');
@@ -93,7 +83,7 @@ function closePopup() {
   }
 }
 
-// Music volume control
+// DOM content loaded — all interactive logic starts here
 document.addEventListener("DOMContentLoaded", () => {
   const music = document.getElementById("bg-music");
   const slider = document.getElementById("volume-slider");
@@ -114,5 +104,17 @@ document.addEventListener("DOMContentLoaded", () => {
   shovel.addEventListener("click", () => {
     window.removalMode = !window.removalMode;
     shovel.classList.toggle("active", window.removalMode);
+  });
+
+  // Firebase listeners AFTER DOM is ready
+  const flowerRef = db.ref('flowers');
+
+  flowerRef.on('child_added', snapshot => {
+    renderFlower(snapshot.val(), snapshot.key);
+  });
+
+  flowerRef.on('child_removed', snapshot => {
+    const flowerEl = document.querySelector(`.flower[data-id='${snapshot.key}']`);
+    if (flowerEl) flowerEl.remove();
   });
 });
