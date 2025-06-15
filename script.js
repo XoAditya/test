@@ -1,4 +1,6 @@
-// Your web app's Firebase configuration (Compat Version)
+// === script.js ===
+
+// Firebase config and initialization
 const firebaseConfig = {
   apiKey: "AIzaSyBgtQdwGMzD-8GK4EEnl4Cd_gGuKGWJ9G0",
   authDomain: "virtuallovegarden.firebaseapp.com",
@@ -10,30 +12,36 @@ const firebaseConfig = {
   measurementId: "G-3GMCVYZXS8"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-
+// Add a flower to the screen and database
 function plantFlower() {
   const message = document.getElementById('message').value.trim();
   if (!message) return;
 
-  const flower = {
+  const flowerData = {
     message,
     row: Math.floor(Math.random() * 5),
     left: Math.random() * 60 + 40,
     top: Math.random() * 60 + 40,
     timestamp: Date.now()
   };
-  db.ref("flowers").push(flower);
+
+  const flowerRef = db.ref('flowers').push();
+  flowerRef.set(flowerData);
+  renderFlower(flowerData, flowerRef.key);
   document.getElementById('message').value = '';
 }
 
-function renderFlower(key, data) {
+// Render flower from data
+function renderFlower(data, id) {
   const garden = document.getElementById('garden');
   const flower = document.createElement('div');
   flower.className = 'flower';
+  flower.dataset.id = id;
+  flower.dataset.message = data.message;
+  flower.dataset.row = data.row;
 
   const rowOffset = data.row * 41;
   flower.style.backgroundPositionY = `-${rowOffset}px`;
@@ -41,18 +49,17 @@ function renderFlower(key, data) {
   flower.style.animation = 'grow-to-2 0.4s steps(1) forwards';
   flower.style.left = data.left + '%';
   flower.style.top = data.top + '%';
-  flower.dataset.message = data.message;
-  flower.dataset.key = key;
 
   flower.onclick = () => {
-    if (window.shovelMode) {
-      db.ref("flowers/" + key).remove();
-      document.getElementById("puff-sound").play();
+    if (window.removalMode) {
+      db.ref('flowers/' + id).remove();
       flower.remove();
+      document.getElementById('puff-sound').play();
     } else {
       flower.style.animation = 'none';
       flower.offsetHeight;
       flower.style.animation = 'grow-to-4 0.6s steps(1) forwards';
+
       setTimeout(() => {
         document.getElementById('popup-text').innerText = data.message;
         document.getElementById('popup').classList.remove('hidden');
@@ -64,6 +71,13 @@ function renderFlower(key, data) {
   garden.appendChild(flower);
 }
 
+// Load existing flowers on page load
+db.ref('flowers').once('value', snapshot => {
+  snapshot.forEach(child => {
+    renderFlower(child.val(), child.key);
+  });
+});
+
 function closePopup() {
   document.getElementById('popup').classList.add('hidden');
   const flower = document.currentFlower;
@@ -74,32 +88,26 @@ function closePopup() {
   }
 }
 
+// Music volume control
 document.addEventListener("DOMContentLoaded", () => {
   const music = document.getElementById("bg-music");
   const slider = document.getElementById("volume-slider");
   const icon = document.getElementById("speaker-icon");
-  const shovel = document.getElementById("shovel-icon");
-  const tooltip = document.querySelector(".shovel-tooltip");
 
   music.volume = 0.5;
-  icon.addEventListener("click", () => slider.classList.toggle("visible"));
-  slider.addEventListener("input", () => music.volume = parseFloat(slider.value));
 
-  // Shovel interaction
-  window.shovelMode = false;
+  icon.addEventListener("click", () => {
+    slider.classList.toggle("visible");
+  });
+
+  slider.addEventListener("input", () => {
+    music.volume = parseFloat(slider.value);
+  });
+
+  // Shovel logic
+  const shovel = document.getElementById("shovel-icon");
   shovel.addEventListener("click", () => {
-    window.shovelMode = !window.shovelMode;
-    shovel.style.transform = window.shovelMode ? "scale(1.2)" : "scale(1)";
-  });
-  shovel.addEventListener("mouseenter", () => {
-    tooltip.textContent = "Click to remove flowers";
-  });
-  shovel.addEventListener("mouseleave", () => {
-    tooltip.textContent = "";
-  });
-
-  // Load flowers
-  db.ref("flowers").on("child_added", snapshot => {
-    renderFlower(snapshot.key, snapshot.val());
+    window.removalMode = !window.removalMode;
+    shovel.classList.toggle("active", window.removalMode);
   });
 });
