@@ -57,27 +57,25 @@ function renderFlower(data, id) {
   garden.appendChild(flower);
 }
 
-// === Planting ===
 function plantFlower() {
   const message = document.getElementById('message').value.trim();
   if (!message) return;
 
   const flowerData = {
-    message,
+    message: message,
     row: Math.floor(Math.random() * 5),
-   left: Math.random() * 70,            // 0% to 70% from left
-top: Math.random() * 40 + 60         // 60% to 100% from top (bottom 40%)
+    left: Math.random() * 70,           // 0–70% from left
+    top: Math.random() * 40 + 60,       // 60–100% from top (bottom 40%)
     timestamp: Date.now()
   };
 
   const flowerRef = db.ref('flowers').push();
   flowerRef.set(flowerData)
     .then(() => {
-      console.log("✅ Flower saved to Firebase:", flowerData);
       renderFlower(flowerData, flowerRef.key);
     })
     .catch(err => {
-      console.error("❌ Failed to save flower:", err);
+      console.error("Error saving flower:", err);
     });
 
   document.getElementById('message').value = '';
