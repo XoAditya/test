@@ -4,7 +4,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyBgtQdwGMzD-8GK4EEnl4Cd_gGuKGWJ9G0",
   authDomain: "virtuallovegarden.firebaseapp.com",
-  databaseURL: "https://virtuallovegarden-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://virtuallovegarden-default-rtdb.asia-southeast1.firebasedatabase.app", // ✅ Updated to correct region
   projectId: "virtuallovegarden",
   storageBucket: "virtuallovegarden.firebasestorage.app",
   messagingSenderId: "73424640990",
@@ -15,13 +15,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// Function to add a flower to the screen
+// ✅ Check Firebase connection
+firebase.database().ref('.info/connected').on('value', (snap) => {
+  console.log("🔌 Firebase connected:", snap.val());
+});
+
+// === Flower Rendering ===
 function renderFlower(data, id) {
   const garden = document.getElementById('garden');
-
-  // Prevent duplicate rendering
-  if (document.querySelector(`.flower[data-id='${id}']`)) return;
-
   const flower = document.createElement('div');
   flower.className = 'flower';
   flower.dataset.id = id;
@@ -56,7 +57,7 @@ function renderFlower(data, id) {
   garden.appendChild(flower);
 }
 
-// Add flower to Firebase only (do not render immediately)
+// === Planting ===
 function plantFlower() {
   const message = document.getElementById('message').value.trim();
   if (!message) return;
@@ -64,28 +65,40 @@ function plantFlower() {
   const flowerData = {
     message,
     row: Math.floor(Math.random() * 5),
-    left: Math.random() * 60 + 20,
+    left: Math.random() * 60 + 20, // Ensure visible placement
     top: Math.random() * 60 + 20,
     timestamp: Date.now()
   };
 
   const flowerRef = db.ref('flowers').push();
-  flowerRef.set(flowerData);
+  flowerRef.set(flowerData)
+    .then(() => {
+      console.log("✅ Flower saved to Firebase:", flowerData);
+      renderFlower(flowerData, flowerRef.key);
+    })
+    .catch(err => {
+      console.error("❌ Failed to save flower:", err);
+    });
 
   document.getElementById('message').value = '';
 }
 
-// Real-time listener for flowers
+// === Realtime Sync ===
 const flowerRef = db.ref('flowers');
+
+// Add flowers in realtime
 flowerRef.on('child_added', snapshot => {
+  console.log("🌼 Loaded flower:", snapshot.val());
   renderFlower(snapshot.val(), snapshot.key);
 });
 
+// Remove flowers in realtime
 flowerRef.on('child_removed', snapshot => {
   const flowerEl = document.querySelector(`.flower[data-id='${snapshot.key}']`);
   if (flowerEl) flowerEl.remove();
 });
 
+// === Close popup ===
 function closePopup() {
   document.getElementById('popup').classList.add('hidden');
   const flower = document.currentFlower;
@@ -96,7 +109,7 @@ function closePopup() {
   }
 }
 
-// Music and shovel control
+// === Music & Shovel Logic ===
 document.addEventListener("DOMContentLoaded", () => {
   const music = document.getElementById("bg-music");
   const slider = document.getElementById("volume-slider");
@@ -112,6 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     music.volume = parseFloat(slider.value);
   });
 
+  // Shovel removal mode toggle
   const shovel = document.getElementById("shovel-icon");
   shovel.addEventListener("click", () => {
     window.removalMode = !window.removalMode;
